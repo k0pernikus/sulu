@@ -520,21 +520,28 @@ abstract class RestController extends FOSRestController
     /**
      * This method processes a put request (delete non-existing entities, update existing entities, add new
      * entries), and let the single actions be modified by callbacks
-     * @param $entities
+     * @param ApiEntity[] $entities
      * @param $requestEntities
      * @param callback $deleteCallback
      * @param callback $updateCallback
      * @param callback $addCallback
+     * @param callback $entityIdCallback defines how to get the entity's id which will be compared with requestEntities' id
      * @return bool
+     * @deprecated
      */
-    protected function processPut($entities, $requestEntities, $deleteCallback, $updateCallback, $addCallback)
+    protected function processPut($entities, $requestEntities, $deleteCallback, $updateCallback, $addCallback, $entityIdCallback = null)
     {
         $success = true;
+        // default for entityIdCallback
+        if ($entityIdCallback === null) {
+            $entityIdCallback = function($entity) {
+                return $entity->getId();
+            };
+        }
 
         if (!empty($entities)) {
             foreach ($entities as $entity) {
-                /** @var ApiEntity $entity */
-                $this->findMatch($requestEntities, $entity->getId(), $matchedEntry, $matchedKey);
+                $this->findMatch($requestEntities, $entityIdCallback($entity), $matchedEntry, $matchedKey);
 
                 if ($matchedEntry == null) {
                     // delete entity if it is not listed anymore
@@ -548,7 +555,7 @@ abstract class RestController extends FOSRestController
                 }
 
                 // Remove done element from array
-                if (!is_null($matchedKey)) {
+                if ($matchedKey !== null) {
                     unset($requestEntities[$matchedKey]);
                 }
             }
