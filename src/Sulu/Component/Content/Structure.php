@@ -966,11 +966,9 @@ abstract class Structure implements StructureInterface
     }
 
     /**
-     * returns an array of property value pairs
-     * @param bool $complete True if result should be representation of full node
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray($complete = true)
+    public function toArray($complete = true, $layer = 1)
     {
         if ($complete) {
             $result = array(
@@ -1006,7 +1004,7 @@ abstract class Structure implements StructureInterface
                 $result['linked'] = 'external';
             }
 
-            $this->appendProperties($this->getProperties(), $result);
+            $this->appendProperties($this->getProperties(), $result, $layer);
 
             $result['ext'] = $this->ext;
 
@@ -1038,12 +1036,12 @@ abstract class Structure implements StructureInterface
         }
     }
 
-    private function appendProperties($properties, &$array)
+    private function appendProperties($properties, &$array, $layer)
     {
         /** @var PropertyInterface $property */
         foreach ($properties as $property) {
             if ($property instanceof SectionPropertyInterface) {
-                $this->appendProperties($property->getChildProperties(), $array);
+                $this->appendProperties($property->getChildProperties(), $array, $layer);
             } else {
                 $array[$property->getName()] = $property->getValue();
             }

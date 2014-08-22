@@ -282,9 +282,10 @@ interface StructureInterface extends \JsonSerializable
     /**
      * returns an array of property value pairs
      * @param bool $complete True if result should be representation of full node
+     * @param int $layer
      * @return array
      */
-    public function toArray($complete = true);
+    public function toArray($complete = true, $layer = 1);
 
     /**
      * returns a property instance with given tag name

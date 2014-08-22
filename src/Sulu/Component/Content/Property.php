@@ -280,6 +280,15 @@ class Property implements PropertyInterface, \JsonSerializable
         return $this->minOccurs > 1 || $this->maxOccurs > 1;
     }
 
+    public function toArray($layer)
+    {
+        if ($this->value instanceof PropertyValueContainerInterface) {
+            return $this->value->toArray($layer);
+        } else {
+            return $this->value;
+        }
+    }
+
     /**
      * @return Metadata
      */
