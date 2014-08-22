@@ -987,6 +987,8 @@ abstract class Structure implements StructureInterface
                 'shadowBaseLanguage' => $this->getShadowBaseLanguage(),
                 'template' => $this->getKey(),
                 'originTemplate' => $this->getOriginTemplate(),
+                'webspaceKey' => $this->getWebspaceKey(),
+                'languageCode' => $this->getLanguageCode(),
                 'hasSub' => $this->hasChildren,
                 'creator' => $this->creator,
                 'changer' => $this->changer,
@@ -1006,7 +1008,7 @@ abstract class Structure implements StructureInterface
 
             $this->appendProperties($this->getProperties(), $result, $layer);
 
-            $result['ext'] = $this->ext;
+            $result['ext'] = $this->extToArray($layer);
 
             return $result;
         } else {
@@ -1036,6 +1038,20 @@ abstract class Structure implements StructureInterface
         }
     }
 
+    private function extToArray($layer)
+    {
+        $result = array();
+        foreach ($this->ext as $key => $value) {
+            if ($value instanceof PropertyValueContainerInterface) {
+                $result[$key] = $value->toArray($layer);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
     private function appendProperties($properties, &$array, $layer)
     {
         /** @var PropertyInterface $property */
@@ -1043,7 +1059,7 @@ abstract class Structure implements StructureInterface
             if ($property instanceof SectionPropertyInterface) {
                 $this->appendProperties($property->getChildProperties(), $array, $layer);
             } else {
-                $array[$property->getName()] = $property->getValue();
+                $array[$property->getName()] = $property->toArray($layer);
             }
         }
     }

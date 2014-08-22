@@ -132,4 +132,11 @@ interface PropertyInterface
      * @return string
      */
     public function getPlaceholder($languageCode);
+
+    /**
+     * Returns array representation of property value
+     * @param int $layer
+     * @return array
+     */
+    public function toArray($layer);
 }

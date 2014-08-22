@@ -250,4 +250,14 @@ class BlockPropertyWrapper implements PropertyInterface
     {
         return $this->property->getPlaceholder($languageCode);
     }
+
+    /**
+     * Returns array representation of property value
+     * @param int $layer
+     * @return array
+     */
+    public function toArray($layer)
+    {
+        $this->property->toArray($layer);
+    }
 }
